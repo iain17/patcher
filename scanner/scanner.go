@@ -48,13 +48,13 @@ func gen(address int64, rd io.Reader) []byte {
 	for scanner.Scan() {
 		//Up the memory address
 		memory += int64( len(scanner.Bytes()) )
-		if memory >= address {
+		if memory > address {
 			for _, byte := range scanner.Bytes() {
 				signature = append(signature, byte)
 			}
 		}
 		//Signature should not be bigger than 8
-		if len(signature) >= 8 {
+		if len(signature) >= 16 {
 			break
 		}
 	}

@@ -57,6 +57,7 @@ var sigGenCmd = &cobra.Command{
 			fmt.Printf("%X ", byte)
 		}
 		println("")
+		println("Be sure to '?' out any references which might be variable.")
 	},
 }
 
