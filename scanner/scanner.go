@@ -11,6 +11,7 @@ import (
 
 const joker = byte(0xff) // which is '?'
 
+//TODO: (optimization) Allow an array of signatures and multiple results. So that we don't iterate through the whole file for every signature.
 func Scan(sig string, filePath string) (int64, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -18,7 +19,7 @@ func Scan(sig string, filePath string) (int64, error) {
 	}
 	defer file.Close()
 
-	sequence := sigToBytes(sig)
+	sequence := SigToBytes(sig)
 	return find(sequence, file), nil
 }
 
@@ -55,7 +56,7 @@ func find(find *list.List, rd io.Reader) int64 {
 }
 
 //Returns bytes based on the signature string.
-func sigToBytes(sig string) *list.List {
+func SigToBytes(sig string) *list.List {
 	parts := strings.Split(sig, " ")
 	bytes := list.New()
 	for _, part := range parts {

@@ -1,4 +1,4 @@
-// Copyright © 2017 NAME HERE <EMAIL ADDRESS>
+// Copyright © 2017 Iain Munro <iain@imunro.nl>
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/iain17/logger"
 )
 
 var cfgFile string
@@ -49,6 +50,12 @@ func Execute() {
 }
 
 func init() {
+	//Generally logging
+	logger.AddOutput(logger.Stdout{
+		MinLevel: logger.DEBUG, //logger.DEBUG,
+		Colored:  true,
+	})
+
 	cobra.OnInitialize(initConfig)
 
 	// Here you will define your flags and configuration settings.

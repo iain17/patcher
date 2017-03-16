@@ -34,10 +34,6 @@ var scanCmd = &cobra.Command{
 	Short: "Scan for a signature",
 	Long: `Find a address based on a given signature in a binary file.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		logger.AddOutput(logger.Stdout{
-			MinLevel: logger.DEBUG, //logger.DEBUG,
-			Colored:  true,
-		})
 		if _, err := os.Stat(filePath); os.IsNotExist(err) {
 			logger.Errorf("file '%s' you gave up to scan does not exist.", filePath)
 			return
