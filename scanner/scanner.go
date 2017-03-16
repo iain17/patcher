@@ -19,7 +19,7 @@ func Scan(sig string, filePath string) (int64, error) {
 	}
 	defer file.Close()
 
-	sequence := SigToBytes(sig)
+	sequence := ByteSeqToByteList(sig)
 	return find(sequence, file), nil
 }
 
@@ -56,7 +56,7 @@ func find(find *list.List, rd io.Reader) int64 {
 }
 
 //Returns bytes based on the signature string.
-func SigToBytes(sig string) *list.List {
+func ByteSeqToByteList(sig string) *list.List {
 	parts := strings.Split(sig, " ")
 	bytes := list.New()
 	for _, part := range parts {

@@ -51,7 +51,7 @@ func (p *Patcher) load() error {
 }
 
 //Finds all the addresses of the
-func (p *Patcher) Find() {
+func (p *Patcher) Find() error {
 	for name, patch := range p.patches {
 		logger.Infof("Finding %s with sig %s", name, patch.Signature)
 		address, err := scanner.Scan(patch.Signature, p.inputPath)
@@ -69,6 +69,7 @@ func (p *Patcher) Find() {
 		patch.Address = address
 		patch.AddressHex = fmt.Sprintf("%#08x", address)//Because it reads easier.
 	}
+	return nil
 }
 
 func (p *Patcher) getPatches() map[int64]*list.List {
@@ -78,7 +79,7 @@ func (p *Patcher) getPatches() map[int64]*list.List {
 		if patch.Address == int64(0) || patch.Write == "" {
 			continue
 		}
-		bytes := scanner.SigToBytes(patch.Write)
+		bytes := scanner.ByteSeqToByteList(patch.Write)
 		if bytes.Len() == 0 {
 			logger.Warningf("'%s' contained no good instructions", patch.Write)
 			continue

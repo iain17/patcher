@@ -7,7 +7,7 @@ import (
 )
 
 //Test string sig to linked list byte data structure.
-func TestSigToBytes(t *testing.T) {
+func TestByteSeqToByteList(t *testing.T) {
 	expect := list.New()
 	expect.PushBack(0xC7)
 	expect.PushBack(0xE8)
@@ -19,7 +19,7 @@ func TestSigToBytes(t *testing.T) {
 	expect.PushBack(0x89)
 
 	input := "C7 E8 ? ? ? ? 48 89"
-	assert.Equal(t, sigToBytes(input), expect)
+	assert.Equal(t, ByteSeqToByteList(input), expect)
 }
 
 //Integration test with the atom executable.
@@ -37,7 +37,7 @@ func TestScan(t *testing.T) {
 	 */
 	find := "55 48 89 E5 41 56 53 49 89 F6 89 FB E8 ? ? ? ? 89 DF 4C"
 	expected := int64(3840)
-	address, err := Scan(find, "../tests/Atom")
+	address, err := Scan(find, "../examples/Atom")
 	if err != nil {
 		panic(err)
 	}

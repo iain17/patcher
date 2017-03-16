@@ -17,40 +17,65 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 	"github.com/iain17/patcher/patcher"
+	"os"
+	"github.com/iain17/logger"
+)
+
+var (
+	outPath string
+	patchPath string
 )
 
 // patchCmd represents the patch command
 var patchCmd = &cobra.Command{
 	Use:   "patch",
 	Short: "Using a patch file. Patch an executable by searching for signatures and overwriting a sequence of bytes.",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Long: `Provide a json file with the patches you'd like to make. Add the signature, this tool will add the address and make a patched version'`,
 	Run: func(cmd *cobra.Command, args []string) {
-		patcher, err := patcher.New("tests/atom.json", "tests/Atom", "tests/Atom_patched")
-		if err != nil {
-			panic(err)
+		if _, err := os.Stat(filePath); os.IsNotExist(err) {
+			logger.Errorf("file '%s' you gave to read does not exist.", filePath)
+			return
 		}
-		patcher.Find()
-		patcher.Patch()
-		patcher.Save()
+
+		if _, err := os.Stat(patchPath); os.IsNotExist(err) {
+			logger.Errorf("file '%s' you gave up as the patch file, does not exist.", patchPath)
+			return
+		}
+
+		if outPath == "" {
+			logger.Error("Please provide a out path. Where the patched file will be saved.")
+			return
+		}
+
+		patcher, err := patcher.New(patchPath, filePath, outPath)
+		if err != nil {
+			logger.Error(err)
+			return
+		}
+		err = patcher.Find()
+		if err != nil {
+			logger.Error(err)
+			return
+		}
+		err = patcher.Patch()
+		if err != nil {
+			logger.Error(err)
+			return
+		}
+		err = patcher.Save()
+		if err != nil {
+			logger.Error(err)
+			return
+		}
+		logger.Info("Patching finished.")
 	},
 }
 
 func init() {
 	RootCmd.AddCommand(patchCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// patchCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// patchCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	patchCmd.Flags().StringVarP(&filePath, "file", "f", "", "Path of file we want to patch")
+	patchCmd.Flags().StringVarP(&outPath, "output", "o", "", "Path of patched file.")
+	patchCmd.Flags().StringVarP(&patchPath, "patch", "p", "", "Path of patch file.")
 
 }
