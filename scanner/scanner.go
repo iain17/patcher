@@ -11,43 +11,18 @@ import (
 
 const joker = byte(0xff) // which is '?'
 
-func Scan(sig string) int64 {
-	file, err := os.Open("tests/Atom")
+func Scan(sig string, filePath string) (int64, error) {
+	file, err := os.Open(filePath)
 	if err != nil {
-		panic(err.Error())
+		return int64(0), err
 	}
 	defer file.Close()
 
 	sequence := sigToBytes(sig)
-	return find(sequence, file)
-
-	//patched, err := os.Create("tests/Bee_pathed")
-	//
-	//if err != nil {
-	//	panic(err.Error())
-	//}
-	//
-	//defer patched.Close()
-	//
-	//reader := bufio.NewReader(file)
-	//scanner := bufio.NewScanner(reader)
-	//scanner.Split(bufio.ScanBytes)
-	//
-	//memory := int64(0)
-	//for scanner.Scan() {
-	//	hexstring := fmt.Sprintf("%#08x = %x", memory, scanner.Text())
-	//	println(hexstring)
-	//
-	//	patched.Write(scanner.Bytes())
-	//
-	//	//Up the memory address
-	//	memory += int64( len(scanner.Bytes()) )
-	//}
-	//return memory
+	return find(sequence, file), nil
 }
 
 func find(find *list.List, rd io.Reader) int64 {
-
 	reader := bufio.NewReader(rd)
 	scanner := bufio.NewScanner(reader)
 	scanner.Split(bufio.ScanBytes)
