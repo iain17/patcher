@@ -26,6 +26,7 @@ import (
 
 var (
 	address string
+	sigLength int32
 )
 
 // sigGenCmd represents the sigGen command
@@ -47,7 +48,8 @@ var sigGenCmd = &cobra.Command{
 		if val == int64(0) {
 			logger.Error("Please provide the address you'd like the signature of")
 		}
-		res, err := scanner.GenSig(val, filePath)
+		length, _ := cmd.Flags().GetInt("length")
+		res, err := scanner.GenSig(val, filePath, length)
 		if err != nil {
 			logger.Error(err)
 			return
@@ -63,6 +65,7 @@ var sigGenCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(sigGenCmd)
+	sigGenCmd.Flags().IntP("length", "l", 16, "Length of signature. The amount of bytes.")
 	sigGenCmd.Flags().StringVarP(&filePath, "file", "f", "", "File path we want to scan in")
 	sigGenCmd.Flags().StringVarP(&address, "address", "a", "0x0", "The address you'd like a signature of")
 }
